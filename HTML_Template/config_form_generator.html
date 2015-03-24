@@ -1,0 +1,76 @@
+{% autoescape None %}
+{% if yaml_config_dict.has_key('property_type') %}
+        <label class="yaml-form-input-label" for="{{ yaml_config_name }}"> {{ request_label(yaml_config_name) }}:</label>
+        {% if yaml_config_dict['property_type'] == 'string' %}
+                <input
+                        type="text"
+                        id="{{ yaml_config_name }}"
+                        {% if yaml_config_dict['mandatory'] == True %}
+                        required=""
+                        {% end %}
+                        {% try %}
+                                {% if yaml_config_dict['default']!='None' %}
+                                        placeholder="{{ yaml_config_dict['default'] }}"
+                                {% end %}
+                        {% except KeyError %}
+                        {% end %}>
+        {% elif yaml_config_dict['property_type'] == 'container-property' %}
+                <select id = "Drop-Down"> 
+                        {% try %}
+                                {% for k,v in yaml_config_dict.iteritems() %}
+                                          {% if isinstance(v,dict) %} 
+                                                          {% for items in v %}
+                                                          {% if 'contain' in items %}
+                                                          {% for x in v[items] %}
+                                                                  <option value={{k}}>{{x}}</option>
+                                                          {% end %}
+                                                          {% end %}
+                                                          {% end %}    
+                                          {{ generate_form(yaml_config_dict[k], k) }}
+                                          {% end %}
+                                {% end %}
+                        {% except KeyError %}
+                        {% end %}
+                </select>
+        {% elif yaml_config_dict['property_type'] == 'bool' %}
+                <input
+                        type="checkbox"
+                        id="{{ yaml_config_name }}"
+                        {% try %}
+                                {% if yaml_config_dict['default']!='None' %}
+                                        {% if yaml_config_dict['default']==True %}
+                                                checked
+                                        {% end %}
+                                {% end %}
+                        {% except KeyError %}
+                        {% end %}
+                        >
+        {% else %}
+                <input
+                        type="text",
+                        id="{{ yaml_config_name }}"
+                        {% try %}
+                                {% if yaml_config_dict['default']!='None' %}
+                                        value="{{ yaml_config_dict['default'] }}"
+                                {% end %}
+                        {% except KeyError %}
+                        {% end %}
+                        >
+        {% end %}
+        {% try %}
+                <div class="yaml-form-input-help">
+                        Help:&nbsp &nbsp{{ request_label(yaml_config_dict['help']) }}
+                </div>
+                <br><br>
+        {% except KeyError%}
+        {% end %}
+{% else %}
+        {% for key in yaml_config_dict %}
+        <div class = "container-element">
+        {% if not yaml_config_dict[key].has_key('property_type') %}
+                <h1 class = "Categories">{{key.capitalize()}}</h1>
+        {% end %}
+        {{ generate_form(yaml_config_dict[key], key) }}
+        </div>
+        {% end %}
+{% end %}

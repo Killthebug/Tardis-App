@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{ static_url('css/form.css') }}">
+        <title>Tardis Web App</title>
+    </head>
+    <body>
+        <h1 class="Heading"> Tardis Online Simulation </h1>
+        <form id="YAML_form">
+            {%include config_form_generator.html %}
+            <br>
+            <input class="btn" type="submit" id="yaml-form-submit"  value="Submit">
+        </form>
+    </body>
+</html>
